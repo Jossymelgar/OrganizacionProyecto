@@ -20,6 +20,11 @@ void L_ClienteBin();
 void L_LineaBin();
 void L_LlamadaBin();
 
+//herramientas de busqueda
+int PosNuevoBinarySearch(vector<Index>, unsigned long);
+int PosBinarySearch(vector<Index>, unsigned long);
+bool binarySearch(vector<Index>, unsigned long, int,int);
+
 //Buscar con indice
 void BI_Ciudad();
 void BI_Cliente();
@@ -147,6 +152,87 @@ void L_LlamadaBin(){
 		cont++;
 	}
 	inFile.close();
+}
+
+//Herramientas de busqueda	
+int PosNuevoBinarySearch(vector<Index> v,unsigned long key){
+    int izquierda = 0;
+    int derecha = v.size() - 1;
+    int medio;
+    bool fin = false;
+    while(izquierda<derecha){   	
+    	medio = (izquierda + derecha)/2;
+    	if(key > v.at(medio).llave){
+    		if(medio != v.size()-1){
+    			if(key < v.at(medio+1).llave){
+    				return medio+1;
+    			}else{
+    				if(fin && medio == v.size()-2){
+    					return -1;
+    				}
+    				izquierda = medio;
+    				fin = true;
+    			}
+    		}else{
+    			if(key < v.at(medio).llave){
+    				return medio;
+    			}else{
+    				return -1;
+    			}
+    		}
+    	}else{
+    		if(medio != 0){
+    			if(key > v.at(medio-1).llave){
+    				return medio;
+    			}else{
+    				derecha = medio;
+    			}
+    		}else{
+    			if(key < v.at(medio).llave){
+    				return medio;
+    			}else{
+    				return medio+1;
+    			}
+    		}
+    	}
+    }
+    return -1;
+}
+int PosBinarySearch(vector<Index> v,unsigned long key){
+	int tama = v.size();
+	int inferior,superior,medio;
+	inferior = 0;
+	superior = tama;
+	while(inferior <= superior){
+		medio = (inferior+superior)/2;
+		if(v.at(medio).llave==key){
+			return medio;	
+		}
+		if(v.at(medio).llave>key){
+			superior = medio;
+			medio =(inferior+superior)/2;
+		}
+		if (v.at(medio).llave<key){
+			inferior = medio;
+			medio =(inferior+superior)/2;
+		}
+	}
+}
+bool binarySearch(vector<Index> v, unsigned long key, int start,int end){
+    if(end < start)
+        return false;
+    else{
+        int mid = (start + end)/2;
+        if(v.at(mid).llave > key){
+            return binarySearch(v, key, start, mid-1);
+        }
+        else if (v.at(mid).llave < key){
+            return binarySearch(v, key, mid+1, end);
+        }
+        else{
+            return true;
+        }
+    }
 }
 
 //Buscar con indice
