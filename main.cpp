@@ -190,3 +190,21 @@ void BI_Cliente(){
 		cout<<"LLave invalido!"<<endl;
 	}
 }
+void BI_Linea(){
+	unsigned long key;
+	cout<<"Ingrese ID Cliente: ";
+	cin>>key;
+	if (binarySearch(l_indexLinea,key,0,l_indexLinea.size()-1)){
+		ifstream inFile("linea.bin",ios::binary);
+		int pos=PosBinarySearch(l_indexLinea,key);
+		char IdCliente[14];
+		char Numero[9];
+		inFile.seekg(tamHeader+ l_indexLinea.at(pos).rrn*( sizeof(IdCliente)+ sizeof(Numero)));
+		inFile.read((char*)&IdCliente, sizeof(IdCliente));
+		inFile.read((char*)&Numero, sizeof(Numero));
+		inFile.close();
+		cout<<IdCliente<<","<<Numero<<endl;
+	}else{
+		cout<<"LLave invalido!"<<endl;
+	}
+}
