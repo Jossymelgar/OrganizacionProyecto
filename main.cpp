@@ -30,10 +30,7 @@ void BI_Ciudad();
 void BI_Cliente();
 void BI_Linea();
 
-//Buscar sin indice
-void B_Ciudad();
-void B_Cliente();
-void B_Linea();
+
 
 
 int main(int argc, char const *argv[]){
