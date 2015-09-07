@@ -14,6 +14,12 @@ struct Index{
 
 int menu();
 
+//Listar
+void L_CiudadBin();
+void L_ClienteBin();
+void L_LineaBin();
+void L_LlamadaBin();
+
 int main(int argc, char const *argv[]){
 
 	
@@ -39,4 +45,30 @@ int menu(){
 			cout<<"Ingrese un valor valido!"<<endl;
 		}
 	}
+}
+
+
+//Listar
+void L_CiudadBin(){
+	ifstream inFile("ciudad.bin",ios::binary);
+	inFile.seekg(0);
+	int avail;
+	int cantRegistros;
+	bool flag;
+	inFile.read((char*)&avail, sizeof(int));
+	inFile.read((char*)&cantRegistros, sizeof(int));
+	inFile.read((char*)&flag, sizeof(bool));
+	cout<<avail<<", "<<cantRegistros<<", "<<flag<<endl;
+	int cont=0;
+	while(cont<cantRegistros){
+		char IdCiudad[5];
+		char NombreCiudad[40];
+		inFile.read((char*)IdCiudad, sizeof(IdCiudad));
+		inFile.read((char*)NombreCiudad, sizeof(NombreCiudad));
+		if (IdCiudad[0]!='*'){
+			cout<<IdCiudad<<","<<NombreCiudad<<endl;
+		}
+		cont++;
+	}
+	inFile.close();
 }
