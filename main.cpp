@@ -325,3 +325,30 @@ void B_Ciudad(){
 		cout<<"LLave invalido!"<<endl;
 	}
 }
+void B_Cliente(){
+	ifstream inFile("cliente.bin",ios::binary);
+	unsigned long key;
+	cout<<"Ingrese ID Cliente: ";
+	cin>>key;
+	inFile.seekg(tamHeader);
+	bool encontrado=false;
+	while(!inFile.eof()){
+		char IdCliente[15];
+		char NombreCliente[40];
+		char Genero[2];
+		char IdCiudad[5];
+		inFile.read((char*)&IdCliente, sizeof(IdCliente));
+		inFile.read((char*)&NombreCliente, sizeof(NombreCliente));
+		inFile.read((char*)&Genero, sizeof(Genero));
+		inFile.read((char*)&IdCiudad, sizeof(IdCiudad));
+		if (atol(IdCliente)==key){
+			stringstream ss;
+			cout<<IdCliente<<","<<NombreCliente<<","<<Genero<<","<<IdCiudad<<endl;
+			encontrado=true;
+		}
+	}
+	inFile.close();
+	if (!encontrado){
+		cout<<"LLave invalido!"<<endl;
+	}
+}
