@@ -20,6 +20,11 @@ void L_ClienteBin();
 void L_LineaBin();
 void L_LlamadaBin();
 
+//Buscar con indice
+void BI_Ciudad();
+void BI_Cliente();
+void BI_Linea();
+
 int main(int argc, char const *argv[]){
 
 	
@@ -142,4 +147,24 @@ void L_LlamadaBin(){
 		cont++;
 	}
 	inFile.close();
+}
+
+//Buscar con indice
+void BI_Ciudad(){
+	unsigned long key;
+	cout<<"Ingrese ID Ciudad: ";
+	cin>>key;
+	if (binarySearch(l_indexCiudad,key,0,l_indexCiudad.size()-1)){
+		ifstream inFile("ciudad.bin",ios::binary);
+		int pos=PosBinarySearch(l_indexCiudad,key);
+		char IdCiudad[5];
+		char NombreCiudad[40];
+		inFile.seekg(tamHeader+l_indexCiudad.at(pos).rrn*( sizeof(IdCiudad)+ sizeof(NombreCiudad)));
+		inFile.read((char*)&IdCiudad, sizeof(IdCiudad));
+		inFile.read((char*)&NombreCiudad, sizeof(NombreCiudad));
+		inFile.close();
+		cout<<IdCiudad<<","<<NombreCiudad<<endl;
+	}else{
+		cout<<"LLave invalido!"<<endl;
+	}
 }
