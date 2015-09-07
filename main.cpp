@@ -168,3 +168,25 @@ void BI_Ciudad(){
 		cout<<"LLave invalido!"<<endl;
 	}
 }
+void BI_Cliente(){
+	unsigned long key;
+	cout<<"Ingrese ID Cliente: ";
+	cin>>key;
+	if (binarySearch(l_indexCliente,key,0,l_indexCliente.size()-1)){
+		ifstream inFile("cliente.bin",ios::binary);
+		int pos=PosBinarySearch(l_indexCliente,key);
+		char IdCliente[15];
+		char NombreCliente[40];
+		char Genero[2];
+		char IdCiudad[5];
+		inFile.seekg(tamHeader+l_indexCliente.at(pos).rrn*( sizeof(IdCliente)+ sizeof(NombreCliente)+ sizeof(Genero)+ sizeof(IdCiudad) ));
+		inFile.read((char*)&IdCliente, sizeof(IdCliente));
+		inFile.read((char*)&NombreCliente, sizeof(NombreCliente));
+		inFile.read((char*)&Genero, sizeof(Genero));
+		inFile.read((char*)&IdCiudad, sizeof(IdCiudad));
+		inFile.close();
+		cout <<IdCliente << "," << NombreCliente << "," << Genero << "," << IdCiudad <<endl;
+	}else{
+		cout<<"LLave invalido!"<<endl;
+	}
+}
