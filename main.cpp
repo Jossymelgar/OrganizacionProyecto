@@ -118,3 +118,28 @@ void L_LineaBin(){
 	}
 	inFile.close();
 }
+void L_LlamadaBin(){
+	ifstream inFile("llamada.bin",ios::binary);
+	inFile.seekg(0);
+	int avail;
+	int cantRegistros;
+	bool flag;
+	inFile.read((char*)&avail, sizeof(int));
+	inFile.read((char*)&cantRegistros, sizeof(int));
+	inFile.read((char*)&flag, sizeof(bool));
+	cout<<avail<<", "<<cantRegistros<<", "<<flag<<endl;
+	int cont=0;
+	while(cont<cantRegistros){
+		char Numero[9];
+		char inic[20];
+		char fin[20];
+		char IdCiudad[4];
+		inFile.read((char*)&Numero, sizeof(Numero));
+		inFile.read((char*)&inic, sizeof(inic));
+		inFile.read((char*)&fin, sizeof(fin));
+		inFile.read((char*)&IdCiudad, sizeof(IdCiudad));
+		cout <<Numero << "," << inic << "," << fin << "," << IdCiudad <<endl;
+		cont++;
+	}
+	inFile.close();
+}
