@@ -30,7 +30,15 @@ void BI_Ciudad();
 void BI_Cliente();
 void BI_Linea();
 
+//Buscar sin indice
+void B_Ciudad();
+void B_Cliente();
+void B_Linea();
 
+//Agregar
+void A_Ciudad();
+void A_Cliente();
+void A_Linea();
 
 
 int main(int argc, char const *argv[]){
@@ -370,5 +378,222 @@ void B_Linea(){
 	inFile.close();
 	if (!encontrado){
 		cout<<"LLave invalido!"<<endl;
+	}
+}
+
+//Agregar
+void A_Ciudad(){
+	char IdCiudad[5];
+	char NombreCiudad[40];
+	string id,nombre;
+	cout<<"ID Ciudad: ";
+	cin>>id;
+	if (!binarySearch(l_indexCiudad,atol(id.c_str()),0,l_indexCiudad.size()-1)){
+		cout<<"Nombre Ciudad: ";
+		cin>>nombre;
+		ifstream inFile("ciudad.bin",ios::binary);
+		int avail;
+		int cantRegistros;
+		int rrn;
+		bool flag=1;
+		inFile.seekg(0);
+		inFile.read((char*)(&avail), sizeof(int));
+		inFile.read((char*)&cantRegistros, sizeof(int));
+		inFile.seekg(tamHeader+ avail*( sizeof(IdCiudad)+ sizeof(NombreCiudad))+ sizeof(IdCiudad));//rrn
+		inFile.read((char*)&NombreCiudad, sizeof(NombreCiudad));
+		inFile.close();
+		rrn=atoi(NombreCiudad);
+		cantRegistros++;
+		for (int i = 0; i < sizeof(NombreCiudad); i++){
+			NombreCiudad[i] = nombre[i];
+		}
+		for (int i = 0; i < sizeof(IdCiudad); i++){
+			IdCiudad[i] = id[i];
+		}
+		ofstream outFile("ciudad.bin",ios::out | ios::in);
+		if (avail==-1){
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			cantRegistros--;
+			outFile.seekp(tamHeader+ cantRegistros*( sizeof(IdCiudad)+ sizeof(NombreCiudad)));
+			outFile.write((char*)&IdCiudad, sizeof(IdCiudad));
+			outFile.write((char*)&NombreCiudad, sizeof(NombreCiudad));
+			cantRegistros++;
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCiudad);
+			Index ind;
+			ind.llave=llave;
+			
+			ind.rrn=cantRegistros;
+			l_indexCiudad.push_back(ind);
+		}else{
+			outFile.seekp(tamHeader+ avail*( sizeof(IdCiudad)+ sizeof(NombreCiudad)));
+			outFile.write((char*)&IdCiudad, sizeof(IdCiudad));
+			outFile.write((char*)&NombreCiudad, sizeof(NombreCiudad));
+			outFile.seekp(0);
+			outFile.write((char*)&rrn, sizeof(rrn));
+			outFile.seekp( sizeof(int)+ sizeof(int));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCiudad);
+			Index ind;
+			ind.llave=llave;
+			ind.rrn=avail;
+			int pos=PosNuevoBinarySearch(l_indexCiudad,llave);
+			l_indexCiudad.insert(l_indexCiudad.begin()+pos,ind);
+		}
+		outFile.close();
+	}else{
+		cout<<"ID invalido!"<<endl;
+	}
+}
+void A_Cliente(){
+	char IdCliente[15];
+	char NombreCliente[40];
+	char Genero[2];
+	char IdCiudad[5];
+	string idcliente,nombre,gender,idciudad;
+	cout<<"ID Cliente: ";
+	cin>>idcliente;
+	if (!binarySearch(l_indexCliente,atol(idcliente.c_str()),0,l_indexCliente.size()-1)){
+		cout<<"Nombre del cliente: ";
+		cin>>nombre;
+		cout<<"Genero[M/F]: ";
+		cin>>gender;
+		cout<<"ID Diudad: ";
+		cin>>idciudad;
+		ifstream inFile("cliente.bin",ios::binary);
+		int avail;
+		int cantRegistros;
+		int rrn;
+		bool flag=1;
+		inFile.seekg(0);
+		inFile.read((char*)(&avail), sizeof(int));
+		inFile.read((char*)&cantRegistros, sizeof(int));
+		inFile.seekg(tamHeader+ avail*( sizeof(IdCliente)+ sizeof(NombreCliente)+ sizeof(Genero)+ sizeof(IdCiudad))+ sizeof(IdCliente));//rrn
+		inFile.read((char*)&NombreCliente, sizeof(NombreCliente));
+		inFile.close();
+		rrn=atoi(NombreCliente);
+		cantRegistros++;
+		for (int i = 0; i < sizeof(IdCliente); ++i){
+			IdCliente[i] = idcliente[i];
+		}
+		for (int i = 0; i < sizeof(NombreCliente); ++i){
+			NombreCliente[i] = nombre[i];
+		}
+		for (int i = 0; i < sizeof(Genero); ++i){
+			Genero[i] = gender[i];
+		}
+		for (int i = 0; i < sizeof(IdCiudad); ++i){
+			IdCiudad[i] = idciudad[i];
+		}
+		ofstream outFile("cliente.bin",ios::out | ios::in);
+		if (avail==-1){
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			cantRegistros--;
+			outFile.seekp(tamHeader+ cantRegistros*( sizeof(IdCliente)+ sizeof(NombreCliente)+ sizeof(Genero)+ sizeof(IdCiudad)));
+			outFile.write((char*)IdCliente, sizeof(IdCliente));
+			outFile.write((char*)NombreCliente, sizeof(NombreCliente));
+			outFile.write((char*)Genero, sizeof(Genero));
+			outFile.write((char*)IdCiudad, sizeof(IdCiudad));
+			cantRegistros++;
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCliente);
+			Index ind;
+			ind.llave=llave;
+			ind.rrn=cantRegistros;
+			int pos=PosNuevoBinarySearch(l_indexCliente,llave);
+			l_indexCliente.insert(l_indexCliente.begin()+pos,ind);
+		}else{
+			outFile.seekp(tamHeader+ avail*( sizeof(IdCliente)+ sizeof(NombreCliente)+ sizeof(Genero)+ sizeof(IdCiudad)));
+			outFile.write((char*)IdCliente, sizeof(IdCliente));
+			outFile.write((char*)NombreCliente, sizeof(NombreCliente));
+			outFile.write((char*)Genero, sizeof(Genero));
+			outFile.write((char*)IdCiudad, sizeof(IdCiudad));
+			outFile.seekp(0);
+			outFile.write((char*)&rrn, sizeof(rrn));
+			outFile.seekp( sizeof(int)+ sizeof(int));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCliente);
+			Index ind;
+			ind.llave=llave;
+			ind.rrn=avail;
+			int pos=PosNuevoBinarySearch(l_indexCliente,llave);
+			l_indexCliente.insert(l_indexCliente.begin()+pos,ind);
+		}
+		outFile.close();
+	}else{
+		cout<<"ID invalido!"<<endl;
+	}
+}
+void A_Linea(){
+	char IdCliente[14];
+	char Numero[9];
+	string id,numero;
+	cout<<"ID Cliente: ";
+	cin>>id;
+	if (!binarySearch(l_indexLinea,atol(id.c_str()),0,l_indexLinea.size()-1)){
+		cout<<"Numero: ";
+		cin>>numero;
+		ifstream inFile("linea.bin",ios::binary);
+		int avail;
+		int cantRegistros;
+		int rrn;
+		bool flag=1;
+		inFile.seekg(0);
+		inFile.read((char*)(&avail), sizeof(int));
+		inFile.read((char*)&cantRegistros, sizeof(int));
+		inFile.seekg(tamHeader+ avail*( sizeof(IdCliente)+ sizeof(Numero))+ sizeof(IdCliente));//rrn
+		inFile.read((char*)&Numero, sizeof(Numero));
+		inFile.close();
+		rrn=atoi(Numero);
+		cantRegistros++;
+		for (int i = 0; i < sizeof(Numero); i++){
+			Numero[i] = numero[i];
+		}
+		for (int i = 0; i < sizeof(IdCliente); i++){
+			IdCliente[i] = id[i];
+		}
+		ofstream outFile("linea.bin",ios::out | ios::in);
+		if (avail==-1){
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			cantRegistros--;
+			outFile.seekp(tamHeader+ cantRegistros*( sizeof(IdCliente)+ sizeof(Numero)));
+			outFile.write((char*)&IdCliente, sizeof(IdCliente));
+			outFile.write((char*)&Numero, sizeof(Numero));
+			cantRegistros++;
+			outFile.seekp( sizeof(int));
+			outFile.write((char*)&cantRegistros, sizeof(cantRegistros));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCliente);
+			Index ind;
+			ind.llave=llave;
+			ind.rrn=cantRegistros;
+			int pos=PosNuevoBinarySearch(l_indexLinea,llave);
+			l_indexLinea.insert(l_indexLinea.begin()+pos,ind);
+
+		}else{
+			outFile.seekp(tamHeader+ avail*( sizeof(IdCliente)+ sizeof(Numero)));
+			outFile.write((char*)&IdCliente, sizeof(IdCliente));
+			outFile.write((char*)&Numero, sizeof(Numero));
+			outFile.seekp(0);
+			outFile.write((char*)&rrn, sizeof(rrn));
+			outFile.seekp( sizeof(int)+ sizeof(int));
+			outFile.write((char*)&flag, sizeof(flag));
+			unsigned long llave=atol(IdCliente);
+			Index ind;
+			ind.llave=llave;
+			ind.rrn=avail;
+			int pos=PosNuevoBinarySearch(l_indexLinea,llave);
+			l_indexLinea.insert(l_indexLinea.begin()+pos,ind);
+		}
+		outFile.close();
+	}else{
+		cout<<"ID invalido!"<<endl;
 	}
 }
